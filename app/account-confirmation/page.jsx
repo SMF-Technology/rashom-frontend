@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { gql, useMutation } from '@apollo/client';
 import client from '../lib/apolloClient';
+export const runtime = 'edge';
 
 // GraphQL Mutation for Confirming Account
 const CONFIRM_ACCOUNT = gql`
