@@ -330,88 +330,47 @@ const categories = gql`
 `;
 
 
-export async function fetchData(slug,searchTerm,productId) {
+export async function fetchData(slug, searchTerm, productId) {
+  const headers = {
+    cache: "no-store", // Disable caching
+  };
 
- 
-  console.log("Fetching data with categorySlug:", slug, "and searchTerm:", searchTerm,"and id :" ,productId);
-    // Initialize variables to hold the data
+  console.log("Fetching data with categorySlug:", slug, "and searchTerm:", searchTerm, "and id :", productId);
 
-    let response = null;
+  let response = null;
+  let response1 = null;
+  let allData = null;
+  let categoryProduct = null;
+  let searchProduct = null;
+  let singleProduct = null;
+  let allCategories = null;
 
-    let response1 = null;
+  try {
+    response = await request(API_URL, newArrival, {}, headers);
+    response1 = await request(API_URL, topSelling, {}, headers);
+    allData = await request(API_URL, allProducts, {}, headers);
+    allCategories = await request(API_URL, categories, {}, headers);
 
-    let allData = null;
-
-    let categoryProduct = null;
-    let searchProduct = null;
-    let singleProduct = null
-    let allCategories = null
-  
-
-    try {
-
-        // Fetch all product data
-
-        response = await request(API_URL, newArrival,{ timestamp: new Date().toISOString() });
-
-        response1 = await request(API_URL, topSelling,{ timestamp: new Date().toISOString() });
-
-        allData = await request(API_URL, allProducts,{ timestamp: new Date().toISOString() });
-        allCategories = await request(API_URL, categories,{ timestamp: new Date().toISOString() });
-     
-        // Attempt to fetch category product data
-
-        if(slug){
-          categoryProduct = await request(API_URL, filterByCategory, { slug });
-        }
-
-        if(searchTerm)
-        {
-          searchProduct = await request(API_URL, searchResult, { searchTerm });
-
-        }
-        if(productId)
-        {
-          singleProduct = await request(API_URL, singleProductDetails, { id : productId });
-
-        }
-    } catch (error) {
-
-        console.error("Error fetching data:", error);
-
+    if (slug) {
+      categoryProduct = await request(API_URL, filterByCategory, { slug }, headers);
     }
+    if (searchTerm) {
+      searchProduct = await request(API_URL, searchResult, { searchTerm }, headers);
+    }
+    if (productId) {
+      singleProduct = await request(API_URL, singleProductDetails, { id: productId }, headers);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 
-
-    // Check if categoryProduct is valid
-
-    const productsByCategory = categoryProduct && categoryProduct.category 
-
-        ? categoryProduct.category.products.edges 
-
-        : []; // Default to an empty array if category is not found
-
-    const productBySearch = searchProduct && searchProduct?.products ? searchProduct.products.edges : []
-    const productDetails = singleProduct && singleProduct?.product ? singleProduct.product : null
-
-
-
-
-    return {
-
-        productsData: response?.products?.edges || [], // Return fetched data or empty array
-
-        productsData1: response1?.products?.edges || [], // Return fetched data or empty array
-
-        allProductsData: allData?.products?.edges || [], // Return fetched data or empty array
-
-        productByCategory: productsByCategory, // Return products by category
-
-        searchProduct : productBySearch,
-        singleProduct : productDetails,
-        allCategoriesName : allCategories?.categories?.edges || []
-      
-        
-
-    };
-
+  return {
+    productsData: response?.products?.edges || [],
+    productsData1: response1?.products?.edges || [],
+    allProductsData: allData?.products?.edges || [],
+    productByCategory: categoryProduct?.category?.products?.edges || [],
+    searchProduct: searchProduct?.products?.edges || [],
+    singleProduct: singleProduct?.product || null,
+    allCategoriesName: allCategories?.categories?.edges || [],
+  };
 }

@@ -2,11 +2,11 @@ import { GrFavorite } from "react-icons/gr";
 import { FaHeart } from "react-icons/fa"; // For filled heart
 import Image from "next/image";
 import Link from "next/link";
-import { useFavorites } from "@/app/context/FavoriteContext"; // Import the context
 import { Loader } from "./Loader";
 import DynamicReactStars from "./DynamicStar";
+import { useFavorites } from "../context/FavoriteContext";
 
-const CommonComponent = ({ title, products, onViewAll,visibleProducts }) => {
+const CommonComponent = ({ title, products, onViewAll, visibleProducts }) => {
     const { favorites, dispatch } = useFavorites(); // Access favorites and dispatch
 
     const handleAddToFavorites = (product) => {
@@ -37,7 +37,7 @@ const CommonComponent = ({ title, products, onViewAll,visibleProducts }) => {
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-auto gap-5 p-4">
                 {products.length !== 0 ? (
-                    products.slice(0,visibleProducts).map((product) => {
+                    products.slice(0, visibleProducts).map((product) => {
                         const imageUrl = product?.media?.[0]?.url || "/fallback-image.jpg";
                         const originalPrice = product?.pricing?.priceRange?.start?.gross?.amount || 0;
                         const discountAmount = product?.pricing?.discount?.gross?.amount || 0;
@@ -45,12 +45,6 @@ const CommonComponent = ({ title, products, onViewAll,visibleProducts }) => {
                         const discountPercentage = originalPrice
                             ? ((discountAmount / originalPrice) * 100).toFixed(2)
                             : 0;
-
-                            console.log("Original Price:", originalPrice);
-console.log("Discount Amount:", discountAmount);
-console.log("Calculated Discount Percentage:", discountPercentage);
-
-                            
 
                         return (
                             <Link href={`/product-details/${product.id}`} key={product.id}>
@@ -114,7 +108,7 @@ console.log("Calculated Discount Percentage:", discountPercentage);
                         );
                     })
                 ) : (
-                    "Loading..."
+                    "No Product is here"
                 )}
             </div>
 

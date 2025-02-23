@@ -5,6 +5,7 @@ import CommonComponent from "./CommonComponent";
 
 const CommonComponentWrapper = ({ title, products }) => {
     const [visibleProducts, setVisibleProducts] = useState(4);
+    
 
     const handleViewAll = () => {
         setVisibleProducts(products.length);

@@ -58,7 +58,7 @@ const SmallNavbar = () => {
               <MegaMenuWithHover />
             </div>
             <div >
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-end h-full">
                 <div className="flex items-center space-x-4 mt-4">
                   <Link href="/favorite">
                     <button className="text-gray-700 text-2xl relative">
@@ -105,7 +105,7 @@ const SmallNavbar = () => {
 
 
           <div className='mx-auto'>
-            <div className="relative w-full px-4 mx-auto mt-2 mb-4">
+            <div className="relative w-full px-2 mx-auto mt-2 mb-4">
               <input
                 type="text"
                 value={query}

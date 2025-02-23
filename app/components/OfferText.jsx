@@ -34,12 +34,12 @@ const OfferText = () => {
         <div className="container mx-auto">
             <div className="grid grid-cols-1 w-auto mx-auto text-black">
                 <div className="flex items-center justify-center space-x-1">
-                    <button
+                    {/* <button
                         onClick={handlePrev}
                         className="font-extrabold transition duration-75"
                     >
                         &lt;
-                    </button>
+                    </button> */}
                     <div className="relative overflow-hidden w-96 h-10">
                         {texts.map((text, index) => (
                             <div
@@ -56,12 +56,12 @@ const OfferText = () => {
                         ))}
                     </div>
 
-                    <button
+                    {/* <button
                         onClick={handleNext}
                         className="font-extrabold transition duration-200"
                     >
                         &gt;
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

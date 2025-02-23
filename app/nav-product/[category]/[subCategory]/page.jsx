@@ -2,7 +2,7 @@ import CommonComponent from '@/app/components/CommonComponent';
 import CommonComponentWrapper from '@/app/components/CommonComponentWrapper';
 import products from '@/app/data/productsData';
 import React from 'react';
-export const runtime = 'edge';
+
 const Page = ({ params }) => {
   const { category, subCategory } = params; 
   const decodedCategory = decodeURIComponent(category);

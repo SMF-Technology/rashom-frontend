@@ -1,32 +1,23 @@
-// app/page.js
+import CommonComponent from '@/app/components/CommonComponent';
 import CommonComponentWrapper from '@/app/components/CommonComponentWrapper';
-import { Loader } from '@/app/components/Loader';
 import { fetchData } from '@/app/lib/fetchData';
-import React, { Suspense } from 'react';
+import React from 'react';
 
-export const runtime = 'edge';
+const page = async ({ params }) => {
+    const { category } = await params;
 
-// Fetch data function (wrapped in React.cache for deduplication)
-const getData = React.cache(async (category) => {
-    const { productByCategory } = await fetchData(category, null, null);
-    return productByCategory.map((edge) => edge.node);
-});
+    const { productByCategory } = await fetchData(category,null,null);
+  
 
-// Component that fetches and renders the data
-async function ProductList({ category }) {
-    const products = await getData(category);
-    return <CommonComponentWrapper title={category} products={products} />;
-}
+    const products = productByCategory.map((edge) => edge.node);
 
-// Page component
-export default function Page({ params }) {
-    const { category } = params;
+
 
     return (
         <div>
-            <Suspense fallback={<Loader />}>
-                <ProductList category={category} />
-            </Suspense>
+            <CommonComponentWrapper title={category} products={products} />
         </div>
     );
 }
+
+export default page;

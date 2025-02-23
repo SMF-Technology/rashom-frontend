@@ -8,6 +8,8 @@ import ReactStars from "react-stars";
 import { useCart } from "../context/CartContext";
 import { Loader } from "./Loader";
 import parse from 'html-react-parser';
+import DescriptionAccordion from "./DescriptionAccordion";
+import DeliveryAccordion from "./DeliveryAccordion";
 
 const ProductDetails = ({ product }) => {
     const { dispatch } = useCart();
@@ -18,7 +20,8 @@ const ProductDetails = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
     const [material, setMaterial] = useState("");
     const [images, setImages] = useState([]);
-    const [selectedImage, setSelectedImage] = useState("");
+    const [selectedImage, setSelectedImage] = useState(images[0] || "/placeholder.png");
+
 
     const originalPrice = product?.pricing?.priceRange?.start?.gross?.amount || 0;
     const discountAmount = product?.pricing?.discount?.gross?.amount || 0;
@@ -99,7 +102,7 @@ const ProductDetails = ({ product }) => {
         <div className="p-6 container mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div className="grid grid-cols-12 gap-y-4 lg:gap-x-4">
-                    <div className="flex flex-row lg:flex-col space-y-0 lg:space-y-2 space-x-2 md:space-x-0 mt-4 col-span-12 lg:col-span-3">
+                    <div className="flex flex-row lg:flex-col space-y-0 lg:space-y-2 space-x-2 md:space-x-2 lg:space-x-0 mt-4 col-span-12 lg:col-span-3">
                         {images.map((image, index) => (
                             <Image
                                 key={index}
@@ -113,13 +116,15 @@ const ProductDetails = ({ product }) => {
                         ))}
                     </div>
                     <div className="col-span-12 lg:col-span-9">
-                        <Image
-                            src={selectedImage}
-                            alt="Product"
-                            width={500}
-                            height={500}
-                            className="w-full h-auto rounded-lg"
-                        />
+                    {selectedImage && (
+  <Image
+    src={selectedImage}
+    alt="Product"
+    width={500}
+    height={500}
+    className="w-full h-auto rounded-lg"
+  />
+)}
                     </div>
                 </div>
                 <div>
@@ -141,42 +146,41 @@ const ProductDetails = ({ product }) => {
                             </div>
                         )}
                     </div>
-                    <p className="mt-4 text-sm text-gray-600 border-b pb-4">
-                        {parse(productDescription)}
-                    </p>
 
                     {colors.length > 0 && (
                         <div className="mt-4">
                             <h3 className="text-sm font-medium text-gray-700">Select Colors</h3>
                             <div className="flex flex-wrap space-x-4 mt-2 border-b pb-4">
-                                {colors.map((color, index) => {
-                                    // Validate if the color is a valid hex or a CSS color name
-                                    const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
-                                    const isValidColorName = /^[a-zA-Z]+$/.test(color) && CSS.supports("color", color);
+    {colors.map((color, index) => {
+        // Validate if the color is a valid hex or a CSS color name
+        const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+        const isValidColorName = /^[a-zA-Z]+$/.test(color) && CSS.supports("color", color);
 
-                                    // Apply the color as a background style if it's valid
-                                    const buttonStyle = isValidHex || isValidColorName ? { backgroundColor: color } : { backgroundColor: "gray" };
+        // Apply the color as a background style if it's valid
+        const buttonStyle = isValidHex || isValidColorName ? { backgroundColor: color } : { backgroundColor: "gray" };
 
-                                    return (
-                                        <button
-                                            key={index}
-                                            className={`w-10 h-10 rounded-full relative ${color.toLowerCase() === "white" ? "border border-black" : "border-none"
-                                                }`}
-                                            style={buttonStyle}
-                                            onClick={() => setSelectedColor(color)}
-                                        >
-                                            {selectedColor === color && (
-                                                <span
-                                                    className={`absolute inset-0 flex items-center justify-center ${selectedColor.toLowerCase() === "white" ? "text-black" : "text-white"
-                                                        } text-xl`}
-                                                >
-                                                    <FaCheck />
-                                                </span>
-                                            )}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+        return (
+            <button
+                key={index}
+                className={`w-10 h-10 rounded-full relative ${
+                    color.toLowerCase() === "white" ? "border border-black" : "border-none"
+                }`}
+                style={buttonStyle}
+                onClick={() => setSelectedColor(color)}
+            >
+                {selectedColor === color && (
+                    <span
+                        className={`absolute inset-0 flex items-center justify-center ${
+                            selectedColor.toLowerCase() === "white" ? "text-black" : "text-white"
+                        } text-xl`}
+                    >
+                        <FaCheck />
+                    </span>
+                )}
+            </button>
+        );
+    })}
+</div>
                         </div>
                     )}
 
@@ -220,6 +224,9 @@ const ProductDetails = ({ product }) => {
                             Add to Cart
                         </button>
                     </div>
+
+                    <DescriptionAccordion title={"Product Description"} description={parse(productDescription)} />
+                    <DeliveryAccordion />
                 </div>
             </div>
 
