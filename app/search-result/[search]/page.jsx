@@ -5,6 +5,7 @@ import WrappedPage from '@/app/components/SearchResult';
 import { fetchData } from '@/app/lib/fetchData'
 import React from 'react'
 import FilterAndDisplay from './FilterAndDisplay';
+export const runtime = "edge";
 
 const page = async ({params}) => {
 

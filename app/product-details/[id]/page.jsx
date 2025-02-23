@@ -4,6 +4,7 @@ import ProductDetails from '@/app/components/ProductDetails';
 import RelatedProduct from '@/app/components/RelatedProduct';
 import { fetchData } from '@/app/lib/fetchData';
 import React from 'react'
+export const runtime = "edge";
 
 const page = async ({params}) => {
 

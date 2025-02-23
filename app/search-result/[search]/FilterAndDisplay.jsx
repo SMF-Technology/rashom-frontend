@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import FilterComponent from "./FilterComponent";
-import CommonComponent from "@/app/components/CommonComponent";
 import CommonComponentWrapper from "@/app/components/CommonComponentWrapper";
+export const runtime = "edge";
 
 const FilterAndDisplay = ({ products, title }) => {
   const [filteredProducts, setFilteredProducts] = useState(products);

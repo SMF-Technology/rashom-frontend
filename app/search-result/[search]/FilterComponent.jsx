@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+export const runtime = "edge";
 
 const FilterComponent = ({ onFilterChange,title,lengthOfProduct }) => {
   const [filter, setFilter] = useState("");

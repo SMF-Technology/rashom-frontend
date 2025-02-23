@@ -2,6 +2,7 @@ import CommonComponent from '@/app/components/CommonComponent';
 import CommonComponentWrapper from '@/app/components/CommonComponentWrapper';
 import { fetchData } from '@/app/lib/fetchData';
 import React from 'react';
+export const runtime = "edge";
 
 const page = async ({ params }) => {
     const { category } = await params;
