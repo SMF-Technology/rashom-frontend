@@ -6,6 +6,8 @@ import CommonComponentWrapper from "./components/CommonComponentWrapper";
 import { fetchData } from "./lib/fetchData";
 // Force Next.js to always fetch fresh data
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 
 export default async function Home() {
   const { productsData, productsData1 } = await fetchData();
