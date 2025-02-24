@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
 import MegaMenuWithHover from "./NavbarLayout"; // This is for large screens
 import SmallNavbar from "./SmallNavbar"; // This is for small screens
 import { CiSearch } from "react-icons/ci";
 import { GrFavorite } from "react-icons/gr";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { CgProfile } from "react-icons/cg";
 import { LuUserRound } from "react-icons/lu";
 import OfferText from "./OfferText";
 import { useEffect, useState } from "react";
@@ -15,13 +14,21 @@ import ProfileDropdown from "./profile/ProfileDropdown";
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoriteContext";
-const Header = () => {
+import { FaUser } from "react-icons/fa";
 
-  const {cart} = useCart()
-  const {favorites} = useFavorites()
+const Header = () => {
+  const { cart } = useCart();
+  const { favorites } = useFavorites();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState(null); // Store userEmail in state
+
+  useEffect(() => {
+    // Fetch userEmail from localStorage on the client side
+    const storedEmail = localStorage.getItem("userEmail");
+    setUserEmail(storedEmail);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,24 +56,23 @@ const Header = () => {
     }
   };
 
-  const cartLength = cart.length
-  const favoriteLength = favorites.length
+  const cartLength = cart.length;
+  const favoriteLength = favorites.length;
+
   return (
     <div className="mx-auto container">
       <OfferText />
       {isSmallScreen ? (
         <SmallNavbar />
       ) : (
-
-        <div className="grid grid-cols-1 md:grid-cols-3 mx-auto my-auto ">
-
+        <div className="grid grid-cols-1 md:grid-cols-3 mx-auto my-auto">
           <div>
             <MegaMenuWithHover />
           </div>
 
           <div className="mt-2 mx-auto">
             <Link href="/" className="text-center mx-auto text-black font-bold text-xl md:text-2xl uppercase my-auto">
-             Resom
+              Resom
             </Link>
           </div>
 
@@ -86,58 +92,58 @@ const Header = () => {
                 />
               </div>
 
-
-             <Link href="/favorite">
-             <button className="text-gray-700 text-2xl relative">
-                <GrFavorite />
-                <span className="absolute bottom-4 bg-red-600 rounded-3xl text-xs py-1 px-2 text-white -right-3"> {favoriteLength} </span>
-
-              </button>
-             </Link>
+              <Link href="/favorite">
+                <button className="text-gray-700 text-2xl relative">
+                  <GrFavorite />
+                  <span className="absolute bottom-4 bg-red-600 rounded-3xl text-xs py-1 px-2 text-white -right-3">
+                    {favoriteLength}
+                  </span>
+                </button>
+              </Link>
 
               <Link href="/cart">
                 <button className="text-gray-700 text-2xl relative">
                   <HiOutlineShoppingBag />
-                  <span className="absolute bottom-4 bg-red-600 rounded-3xl text-xs py-1 px-2 text-white -right-2"> {cartLength} </span>
+                  <span className="absolute bottom-4 bg-red-600 rounded-3xl text-xs py-1 px-2 text-white -right-2">
+                    {cartLength}
+                  </span>
                 </button>
               </Link>
 
               <div className="relative">
-
-                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="text-gray-700 text-2xl">
-
-                  <LuUserRound />
-
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="text-gray-700 text-2xl"
+                >
+                  {userEmail ? <FaUser /> : <LuUserRound />}
                 </button>
 
                 {isDropdownOpen && (
-
-                  <ProfileDropdown
-
-                    onClose={() => setIsDropdownOpen(false)}
-
-                    onProfileClick={() => {
-
-                      setIsModalOpen(true); // Open the modal when Profile is clicked
-
-                    }}
-
-                  />
-
+                  <>
+                    {userEmail ? (
+                      <ProfileDropdown
+                        onClose={() => setIsDropdownOpen(false)}
+                        setUserEmail={setUserEmail} // Pass setUserEmail to ProfileDropdown
+                      />
+                    ) : (
+                      <LoginModal
+                        isOpen={isDropdownOpen}
+                        onClose={() => setIsDropdownOpen(false)}
+                        setUserEmail={setUserEmail} // Pass setUserEmail to LoginModal
+                      />
+                    )}
+                  </>
                 )}
-
               </div>
-              
             </div>
           </div>
-
-
         </div>
       )}
 
       <LoginModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        setUserEmail={setUserEmail} // Pass setUserEmail to LoginModal
       />
     </div>
   );

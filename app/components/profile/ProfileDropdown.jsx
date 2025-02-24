@@ -1,4 +1,3 @@
-// ProfileDropdown.js
 import React from 'react';
 import {
     Button,
@@ -8,28 +7,48 @@ import {
     DialogFooter,
 } from "@material-tailwind/react";
 import { LuUserRound } from "react-icons/lu";
+import { FaUser } from "react-icons/fa";
 import { IoReorderFourOutline } from "react-icons/io5";
 import { TiFolderDelete } from "react-icons/ti";
 import { CiCreditCard1 } from "react-icons/ci";
 import { TbAffiliate } from "react-icons/tb";
 import { TbHelp } from "react-icons/tb";
 import { TbLogout2 } from "react-icons/tb";
+import { useRouter } from "next/navigation";
 
-const ProfileDropdown = ({ onClose, onProfileClick }) => {
+const ProfileDropdown = ({ onClose, onProfileClick, setUserEmail }) => {
     const [size, setSize] = React.useState(null);
+    const router = useRouter();
+    const userEmail = localStorage.getItem("userEmail"); // No need to parse
 
     const handleOpen = (value) => {
         setSize(value);
+    };
+
+    const handleLogout = () => {
+        // Remove user data from localStorage
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("userEmail");
+
+        // Update userEmail state in the parent component
+        setUserEmail(null);
+
+        // Redirect to the home page
+        router.push("/");
+
+        // Close the dropdown
+        onClose();
     };
 
     return (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
             <div className="py-1">
                 <button
-                    className=" flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={() => { onClose(); onProfileClick(); }}
+                    className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => { onClose(); userEmail ? router.push("/account") : onProfileClick(); }}
                 >
-                  <LuUserRound className='my-auto'/>  Profile
+                    {userEmail ? <FaUser className='my-auto' /> : <LuUserRound className="my-auto" />} Profile
                 </button>
                 <button
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -41,31 +60,31 @@ const ProfileDropdown = ({ onClose, onProfileClick }) => {
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => { onClose(); console.log('Security clicked'); }}
                 >
-                    <TiFolderDelete className='my-auto'/> Security
+                    <TiFolderDelete className='my-auto' /> Security
                 </button>
                 <button
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => { onClose(); console.log('Payment clicked'); }}
                 >
-                  <CiCreditCard1 className='my-auto'/>  Payment
+                    <CiCreditCard1 className='my-auto' /> Payment
                 </button>
                 <button
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => { onClose(); handleOpen("md"); }} // Open modal with size "md"
                 >
-                <TbAffiliate className='my-auto'/>    Affiliate
+                    <TbAffiliate className='my-auto' /> Affiliate
                 </button>
                 <button
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => { onClose(); handleOpen("md"); }} // Open modal with size "md"
                 >
-                <TbHelp className='my-auto'/>    Need Help
+                    <TbHelp className='my-auto' /> Need Help
                 </button>
                 <button
                     className="flex gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={() => { onClose(); console.log('Logout clicked'); }}
+                    onClick={handleLogout}
                 >
-                <TbLogout2 className='my-auto'/>    Logout
+                    <TbLogout2 className='my-auto' /> Logout
                 </button>
             </div>
             <Dialog

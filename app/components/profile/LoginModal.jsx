@@ -25,7 +25,7 @@ const LOGIN_USER = gql`
   }
 `;
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
   if (!isOpen) return null;
 
   const [formData, setFormData] = useState({
@@ -61,11 +61,19 @@ const LoginModal = ({ isOpen, onClose }) => {
         setError(data.tokenCreate.accountErrors[0].message);
       } else {
         const { token, refreshToken, user } = data.tokenCreate;
+
+        // Save tokens and user email to localStorage
         localStorage.setItem("authToken", token);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("userEmail", user.email);
 
-        onClose(); // Close modal after successful login
+        // Update userEmail state in the parent component
+        setUserEmail(user.email);
+
+        // Close modal after successful login
+        onClose();
+
+        // Redirect to home page
         router.push("/");
       }
     } catch (err) {

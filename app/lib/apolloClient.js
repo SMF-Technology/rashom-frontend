@@ -1,23 +1,23 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'https://resom-api.resom.com.br/graphql/', // Replace with your Saleor API URL
+  uri: 'https://resom-api.resom.com.br/graphql/',
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const token = localStorage.getItem('authToken');
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
+      authorization: token ? `Bearer ${token}` : "",
+    }
   };
 });
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache()
 });
 
-export default client;
+export default client

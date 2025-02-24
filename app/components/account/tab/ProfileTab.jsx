@@ -1,28 +1,54 @@
-import React from 'react'
+"use client";
 
-const ProfileTab = () => {
-    return (
-        <div>
-            <div className='bg-white rounded-lg p-5'>
-                <h1 className='text-2xl text-black'>Personal Information</h1>
-                <p className='mt-4'>João Carlos da Silva, 29 years old, Male, CPF: 123.456.789-00</p>
-            </div>
-            <div className='bg-white rounded-lg p-5 mt-5'>
-                <h1 className='text-2xl text-black'>Address</h1>
-                <p className='mt-5'>Here’s the Brazilian address in a single line format:</p>
-                <p>
-                    Rua João da Silva, 123, Apartamento 402, Bloco 12A, Centro, São Paulo - SP, CEP 01001-000, Brasil</p>
-            </div>
-            <div className='bg-white rounded-lg p-5 mt-5'>
-                <h1 className='text-2xl text-black'>Contact Information</h1>
+import { gql, useQuery } from "@apollo/client";
 
-                <p className='font-semibold text-gray-500 mt-5'>Email Address</p>
-                <p className='text-lg'>example@gmail.com</p>
-                <p>
-                    Rua João da Silva, 123, Apartamento 402, Bloco 12A, Centro, São Paulo - SP, CEP 01001-000, Brasil</p>
-            </div>
-        </div>
-    )
+const GET_USER_DATA = gql`
+  query GetUserData {
+    me {
+      id
+      email
+      firstName
+      lastName
+      metadata {
+        key
+        value
+      }
+    }
+  }
+`;
+
+export default function ProfileTab() {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+
+  const { loading, error, data } = useQuery(GET_USER_DATA, {
+    context: {
+      headers: {
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+  if (!data?.me) return <p>No user data found</p>;
+
+  console.log(data.me);
+  
+
+  return (
+    <div>
+      <h2>User Profile</h2>
+      <p><strong>Email:</strong> {data?.me?.email || "N/A"}</p>
+      <p><strong>First Name:</strong> {data?.me?.firstName || "N/A"}</p>
+      <p><strong>Last Name:</strong> {data?.me?.lastName || "N/A"}</p>
+      <h3>Metadata:</h3>
+      <ul>
+        {data?.me?.metadata?.map((meta, index) => (
+          <li key={index}>
+            <strong>{meta.key}:</strong> {meta.value}
+          </li>
+        )) || <p>No metadata available</p>}
+      </ul>
+    </div>
+  );
 }
-
-export default ProfileTab
