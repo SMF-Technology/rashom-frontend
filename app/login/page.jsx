@@ -50,7 +50,7 @@ export default function Login() {
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('userEmail', user.email);
 
-        router.push('/dashboard'); // Redirect after login
+        router.push('/'); // Redirect after login
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');

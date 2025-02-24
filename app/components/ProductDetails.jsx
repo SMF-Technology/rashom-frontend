@@ -116,15 +116,15 @@ const ProductDetails = ({ product }) => {
                         ))}
                     </div>
                     <div className="col-span-12 lg:col-span-9">
-                    {selectedImage && (
-  <Image
-    src={selectedImage}
-    alt="Product"
-    width={500}
-    height={500}
-    className="w-full h-auto rounded-lg"
-  />
-)}
+                        {selectedImage && (
+                            <Image
+                                src={selectedImage}
+                                alt="Product"
+                                width={500}
+                                height={500}
+                                className="w-full h-auto rounded-lg"
+                            />
+                        )}
                     </div>
                 </div>
                 <div>
@@ -151,36 +151,34 @@ const ProductDetails = ({ product }) => {
                         <div className="mt-4">
                             <h3 className="text-sm font-medium text-gray-700">Select Colors</h3>
                             <div className="flex flex-wrap space-x-4 mt-2 border-b pb-4">
-    {colors.map((color, index) => {
-        // Validate if the color is a valid hex or a CSS color name
-        const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
-        const isValidColorName = /^[a-zA-Z]+$/.test(color) && CSS.supports("color", color);
+                                {colors.map((color, index) => {
+                                    // Validate if the color is a valid hex or a CSS color name
+                                    const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+                                    const isValidColorName = /^[a-zA-Z]+$/.test(color) && CSS.supports("color", color);
 
-        // Apply the color as a background style if it's valid
-        const buttonStyle = isValidHex || isValidColorName ? { backgroundColor: color } : { backgroundColor: "gray" };
+                                    // Apply the color as a background style if it's valid
+                                    const buttonStyle = isValidHex || isValidColorName ? { backgroundColor: color } : { backgroundColor: "gray" };
 
-        return (
-            <button
-                key={index}
-                className={`w-10 h-10 rounded-full relative ${
-                    color.toLowerCase() === "white" ? "border border-black" : "border-none"
-                }`}
-                style={buttonStyle}
-                onClick={() => setSelectedColor(color)}
-            >
-                {selectedColor === color && (
-                    <span
-                        className={`absolute inset-0 flex items-center justify-center ${
-                            selectedColor.toLowerCase() === "white" ? "text-black" : "text-white"
-                        } text-xl`}
-                    >
-                        <FaCheck />
-                    </span>
-                )}
-            </button>
-        );
-    })}
-</div>
+                                    return (
+                                        <button
+                                            key={index}
+                                            className={`w-10 h-10 rounded-full relative ${color.toLowerCase() === "white" ? "border border-black" : "border-none"
+                                                }`}
+                                            style={buttonStyle}
+                                            onClick={() => setSelectedColor(color)}
+                                        >
+                                            {selectedColor === color && (
+                                                <span
+                                                    className={`absolute inset-0 flex items-center justify-center ${selectedColor.toLowerCase() === "white" ? "text-black" : "text-white"
+                                                        } text-xl`}
+                                                >
+                                                    <FaCheck />
+                                                </span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 

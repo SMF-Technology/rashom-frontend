@@ -2,18 +2,43 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import client from "../../lib/apolloClient";
+import { useRouter } from "next/navigation";
+
+// GraphQL Login Mutation
+const LOGIN_USER = gql`
+  mutation TokenCreate($email: String!, $password: String!) {
+    tokenCreate(email: $email, password: $password) {
+      token
+      refreshToken
+      user {
+        id
+        email
+        isActive
+      }
+      accountErrors {
+        field
+        message
+      }
+    }
+  }
+`;
 
 const LoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const [formData, setFormData] = useState({
     email: "",
-    otp: "",
+    password: "",
   });
-  const [isOtpSent, setIsOtpSent] = useState(false); // Track if OTP is sent
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, { client });
 
   const isEmailFilled = formData.email.trim() !== "";
-  const isOtpFilled = formData.otp.trim() !== "";
+  const isPasswordFilled = formData.password.trim() !== "";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,19 +48,30 @@ const LoginModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleSendOtp = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate sending OTP
-    console.log("OTP sent to:", formData.email);
-    setIsOtpSent(true);
-  };
+    setError("");
 
-  const handleVerifyOtp = (e) => {
-    e.preventDefault();
-    // Simulate OTP verification
-    console.log("OTP verified:", formData.otp);
-    alert("OTP Verified. Login successful!");
-    onClose();
+    try {
+      const { data } = await loginUser({
+        variables: { ...formData },
+      });
+
+      if (data.tokenCreate.accountErrors.length > 0) {
+        setError(data.tokenCreate.accountErrors[0].message);
+      } else {
+        const { token, refreshToken, user } = data.tokenCreate;
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userEmail", user.email);
+
+        onClose(); // Close modal after successful login
+        router.push("/");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error(err);
+    }
   };
 
   return (
@@ -62,57 +98,40 @@ const LoginModal = ({ isOpen, onClose }) => {
             </Link>
           </div>
         </div>
-        <form>
-          {!isOtpSent ? (
-            <>
-              {/* Email Input */}
-              <input
-                type="text"
-                name="email"
-                placeholder="Please enter email"
-                className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-              <button
-                disabled={!isEmailFilled}
-                onClick={handleSendOtp}
-                className={`w-full py-2 rounded-lg transition ${
-                  isEmailFilled
-                    ? "bg-black text-white"
-                    : "bg-[#D9D9D9] text-white cursor-not-allowed"
-                }`}
-              >
-                Send OTP
-              </button>
-            </>
-          ) : (
-            <>
-              {/* OTP Input */}
-              <input
-                type="text"
-                name="otp"
-                placeholder="Enter OTP"
-                className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
-                value={formData.otp}
-                onChange={handleInputChange}
-              />
-              <button
-                disabled={!isOtpFilled}
-                onClick={handleVerifyOtp}
-                className={`w-full py-2 rounded-lg transition ${
-                  isOtpFilled
-                    ? "bg-black text-white"
-                    : "bg-[#D9D9D9] text-white cursor-not-allowed"
-                }`}
-              >
-                Continue
-              </button>
-            </>
-          )}
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Please enter email"
+            className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading || !isEmailFilled || !isPasswordFilled}
+            className={`w-full py-2 rounded-lg transition ${
+              isEmailFilled && isPasswordFilled
+                ? "bg-black text-white"
+                : "bg-[#D9D9D9] text-white cursor-not-allowed"
+            }`}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
         <p className="text-sm text-gray-500 mt-4">
-          By continuing, I agree to their{" "}
+          By continuing, I agree to their {" "}
           <a href="#" className="text-gray-500 underline">
             privacy and policy
           </a>
