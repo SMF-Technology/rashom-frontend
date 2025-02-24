@@ -31,34 +31,26 @@ const Registration = () => {
                     <div>
                         <h1 className='text-2xl'>Personal Information</h1>
                         <form>
-                            <div className='mt-5'>
-                                <label>Full Name*</label>
+                          
+
+                            <div className='flex flex-col md:flex-row gap-4'>
+                                <div className='mt-5 flex-1'>
+                                <label>First Name*</label>
                                 <input
                                     type="text"
                                     className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
                                     placeholder="e.g., Joao Silva"
                                     required
                                 />
-                            </div>
-
-                            <div className='flex flex-col md:flex-row gap-4'>
-                                <div className='mt-5 flex-1'>
-                                    <label>Date of Birth*</label>
-                                    <input
-                                        type="date"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="MM/DD/YYYY"
-
-                                    />
                                 </div>
                                 <div className='mt-5 flex-1'>
-                                    <label>CPF*</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="e.g., 123.456.789-09"
-                                        required
-                                    />
+                                <label>Last Name*</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
+                                    placeholder="e.g., Joao Silva"
+                                    required
+                                />
                                 </div>
                             </div>
 
@@ -78,32 +70,12 @@ const Registration = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className='mt-5 flex-1'>
-                                    <label>CEP (Postal Code)*</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="e.g., 12345-678"
-                                        required
-                                    />
-                                </div>
-                                <div className='mt-5 flex-1'>
-                                    <label>State (Estado)*</label>
-                                    <select required
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text -slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow">
-                                        <option value="">Select State</option>
-                                        {states.map((state) => (
-                                            <option key={state.isoCode} value={state.isoCode}>
-                                                {state.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                               
                             </div>
                             <div className='flex flex-col md:flex-row gap-4'>
 
                                 <div className='mt-5 flex-1'>
-                                    <label>Street (Logradouro)*</label>
+                                    <label>Address*</label>
                                     <input
                                         type="text"
                                         className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
@@ -111,50 +83,13 @@ const Registration = () => {
                                         required
                                     />
                                 </div>
-                                <div className='mt-5 flex-1'>
-                                    <label>Number (Número)*</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="House/building Number"
-                                        required
-                                    />
-                                </div>
+                               
 
                             </div>
+                         
                             <div className='flex flex-col md:flex-row gap-4'>
 
-                                <div className='mt-5 flex-1'>
-                                    <label>Apartment (Apartmento)</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="e.g., Rua Avenida"
-
-                                    />
-                                </div>
-                                <div className='mt-5 flex-1'>
-                                    <label>Block (Quadra)*</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="e.g., Rua Avenida"
-                                        required
-                                    />
-                                </div>
-
-                            </div>
-                            <div className='flex flex-col md:flex-row gap-4'>
-
-                                <div className='mt-5 flex-1'>
-                                    <label>Neighborhood (Bairro)*</label>
-                                    <input
-                                        type="text"
-                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                        placeholder="e.g., Centro"
-                                        required
-                                    />
-                                </div>
+                               
                                 <div className='mt-5 flex-1'>
                                     <label>City (Cidade)*</label>
                                     <input
@@ -167,15 +102,7 @@ const Registration = () => {
 
                             </div>
 
-                            <div className='mt-5'>
-                                <label>Complement(Complemento)</label>
-                                <input
-                                    type="text"
-                                    className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                    placeholder="e.g., Joao Silva"
-
-                                />
-                            </div>
+                           
 
                             <h3 className='text-2xl mt-5'>Contact Information</h3>
 
