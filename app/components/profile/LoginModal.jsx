@@ -28,17 +28,11 @@ const LOGIN_USER = gql`
 const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
   if (!isOpen) return null;
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const router = useRouter();
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, { client });
-
-  const isEmailFilled = formData.email.trim() !== "";
-  const isPasswordFilled = formData.password.trim() !== "";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,27 +47,25 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
     setError("");
 
     try {
-      const { data } = await loginUser({
-        variables: { ...formData },
-      });
+      const { data } = await loginUser({ variables: { ...formData } });
 
       if (data.tokenCreate.accountErrors.length > 0) {
         setError(data.tokenCreate.accountErrors[0].message);
       } else {
         const { token, refreshToken, user } = data.tokenCreate;
 
-        // Save tokens and user email to localStorage
+        // Decode JWT to get expiration time
+        const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+        const tokenExpiry = tokenPayload.exp * 1000; // Convert to milliseconds
+
+        // Save tokens and expiration time
         localStorage.setItem("authToken", token);
         localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("tokenExpiry", tokenExpiry);
         localStorage.setItem("userEmail", user.email);
 
-        // Update userEmail state in the parent component
         setUserEmail(user.email);
-
-        // Close modal after successful login
         onClose();
-
-        // Redirect to home page
         router.push("/");
       }
     } catch (err) {
@@ -97,11 +89,7 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
             <p className="text-[#1A1919] mb-4">Please log in first</p>
           </div>
           <div>
-            <Link
-              href="/registration"
-              onClick={onClose}
-              className="text-[#1A1919] font-semibold"
-            >
+            <Link href="/registration" onClick={onClose} className="text-[#1A1919] font-semibold">
               Registration
             </Link>
           </div>
@@ -128,12 +116,8 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            disabled={loading || !isEmailFilled || !isPasswordFilled}
-            className={`w-full py-2 rounded-lg transition ${
-              isEmailFilled && isPasswordFilled
-                ? "bg-black text-white"
-                : "bg-[#D9D9D9] text-white cursor-not-allowed"
-            }`}
+            disabled={loading}
+            className="w-full py-2 rounded-lg transition bg-black text-white"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

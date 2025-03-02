@@ -32,23 +32,43 @@ export default function ProfileTab() {
   if (error) return <p>Error: {error.message}</p>;
   if (!data?.me) return <p>No user data found</p>;
 
-  console.log(data.me);
-  
+  const phoneMetaData = data?.me?.metadata?.find(meta => meta.key === "phone")
+  const phoneNumber = phoneMetaData ? phoneMetaData?.value : "N/A"
+
+  const addressParts = ["apartment", "block", "street", "city", "cpf", "zip", "country"]
+  const metadataMap = data?.me?.metadata?.reduce((acc, meta) => {
+    acc[meta.key] = meta.value
+    return acc
+  }, {})
+
+  const formattedAddress = addressParts.map((key) => metadataMap[key]).filter(Boolean).join(", ")
 
   return (
     <div>
-      <h2>User Profile</h2>
-      <p><strong>Email:</strong> {data?.me?.email || "N/A"}</p>
-      <p><strong>First Name:</strong> {data?.me?.firstName || "N/A"}</p>
-      <p><strong>Last Name:</strong> {data?.me?.lastName || "N/A"}</p>
-      <h3>Metadata:</h3>
-      <ul>
-        {data?.me?.metadata?.map((meta, index) => (
-          <li key={index}>
-            <strong>{meta.key}:</strong> {meta.value}
-          </li>
-        )) || <p>No metadata available</p>}
-      </ul>
+
+      <div className="p-4 bg-white rounded-md mb-5">
+        <h1 className="text-2xl font-medium">Personal Information</h1>
+
+        <p className="mt-3">{data?.me?.firstName} {data?.me?.lastName}</p>
+      </div>
+
+      <div className="p-4 bg-white rounded-md mb-5">
+        <h1 className="text-2xl font-medium">Address</h1>
+
+        <p className="mt-3"> {formattedAddress || "Address not available"}</p>
+      </div>
+
+      <div className="p-4 bg-white rounded-md mb-5">
+        <h1 className="text-2xl font-medium">Contact Information</h1>
+
+        <p className="mt-3"> Email : {data?.me?.email}</p>
+        <p className="mt-3"> Phone : {phoneNumber}</p>
+      </div>
+
+
+
+
+
     </div>
   );
 }

@@ -46,7 +46,7 @@ const Registration = () => {
     const [userPhoneNumber, setUserPhoneNumber] = useState('');
     const [corporatePhoneNumber, setCorporatePhoneNumber] = useState('');
     const [responsiblePhoneNumber, setResponsiblePhoneNumber] = useState('');
-    const [states, setStates] = useState(["Sao Paulo","Rio"]);
+    const [states, setStates] = useState(["Sao Paulo", "Rio"]);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -72,6 +72,8 @@ const Registration = () => {
         responsibleName: '',
     });
 
+
+
     const [registerUser, { loading, error, data }] = useMutation(REGISTER_USER, { client });
 
     const handleCountryChange = (event) => {
@@ -84,6 +86,10 @@ const Registration = () => {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+
+
+
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -117,8 +123,8 @@ const Registration = () => {
                 variables: {
                     email: formData.email,
                     password: formData.password,
-                    firstName:formData.firstName,
-                    lastName:formData.lastName,
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
                     redirectUrl,
                     metadata,
                 },
@@ -146,32 +152,32 @@ const Registration = () => {
                     <div>
                         <h1 className='text-2xl'>Personal Information</h1>
                         <form onSubmit={handleRegister}>
-                          <div  className='flex flex-col md:flex-row gap-4'>
-                          <div className='mt-5 flex-1'>
-                                <label>First Name*</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                    placeholder="e.g., Joao Silva"
-                                    required
-                                />
+                            <div className='flex flex-col md:flex-row gap-4'>
+                                <div className='mt-5 flex-1'>
+                                    <label>First Name*</label>
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleChange}
+                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
+                                        placeholder="e.g., Joao Silva"
+                                        required
+                                    />
+                                </div>
+                                <div className='mt-5 flex-1'>
+                                    <label>Last Name*</label>
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleChange}
+                                        className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
+                                        placeholder="e.g., Joao Silva"
+                                        required
+                                    />
+                                </div>
                             </div>
-                          <div className='mt-5 flex-1'>
-                                <label>Last Name*</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    className="w-full bg-[#EFEFEF] placeholder:text-slate-400 text-slate-700 mb-2 text-sm border border-black rounded-md pl-3 pr-20 py-4 focus:outline-none shadow-sm focus:shadow"
-                                    placeholder="e.g., Joao Silva"
-                                    required
-                                />
-                            </div>
-                          </div>
 
                             <div className='flex flex-col md:flex-row gap-4'>
                                 <div className='mt-5 flex-1'>
