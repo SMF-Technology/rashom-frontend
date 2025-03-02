@@ -1,6 +1,7 @@
 "use client";
 
 import { gql, useQuery } from "@apollo/client";
+import { useEffect } from "react";
 
 const GET_USER_DATA = gql`
   query GetUserData {
@@ -27,6 +28,12 @@ export default function ProfileTab() {
       },
     },
   });
+
+  useEffect(() => {
+
+    console.log("it is triggers", data)
+  }, [])
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;

@@ -29,21 +29,21 @@ const ManageAccount = () => {
         { id: "logout", icon: <TbLogout2 />, label: "Log Out" },
     ];
 
-        const handleCopyLink = () => {
-            navigator.clipboard.writeText(referralLink);
-            alert('Referral link copied!');
-        };
-    
-        const handleShareLink = () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Join Our Affiliate Program',
-                    url: referralLink
-                }).catch(console.error);
-            } else {
-                alert('Share not supported on this browser.');
-            }
-        };
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(referralLink);
+        alert('Referral link copied!');
+    };
+
+    const handleShareLink = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Join Our Affiliate Program',
+                url: referralLink
+            }).catch(console.error);
+        } else {
+            alert('Share not supported on this browser.');
+        }
+    };
 
     const activeTabObject = tabs.find(tab => tab.id === activeTab);
 
@@ -134,7 +134,7 @@ const ManageAccount = () => {
                     {renderContent()}
                 </main>
 
-                
+
             </div>
         </div>
     );
