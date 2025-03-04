@@ -30,6 +30,7 @@ const ProfileDropdown = ({ onClose, onProfileClick, setUserEmail }) => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("userEmail");
+        localStorage.removeItem("tokenExpiry");
 
         // Update userEmail state in the parent component
         setUserEmail(null);

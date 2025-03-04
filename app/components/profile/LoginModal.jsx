@@ -1,76 +1,54 @@
+
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useState, useEffect } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import client from "../../lib/apolloClient";
-import { useRouter } from "next/navigation";
+import { useSaleorAuthContext } from "@saleor/auth-sdk/react";
 
-// GraphQL Login Mutation
-const LOGIN_USER = gql`
-  mutation TokenCreate($email: String!, $password: String!) {
-    tokenCreate(email: $email, password: $password) {
-      token
-      refreshToken
-      user {
-        id
-        email
-        isActive
-      }
-      accountErrors {
-        field
-        message
-      }
+const CurrentUserDocument = gql`
+  query CurrentUser {
+    me {
+      id
+      email
+      firstName
+      lastName
     }
   }
 `;
+
 
 const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
   if (!isOpen) return null;
 
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [errors, setErrors] = useState([]);
 
-  const [loginUser, { loading }] = useMutation(LOGIN_USER, { client });
+  const { data: currentUser, loading } = useQuery(CurrentUserDocument);
+  console.log("data", currentUser);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const { signIn, signOut } = useSaleorAuthContext();
+
+  const changeHandler = (event) => {
+    const { name, value } = event.currentTarget;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+  const submitHandler = async (event) => {
+    event.preventDefault();
 
-    try {
-      const { data } = await loginUser({ variables: { ...formData } });
+    const { data } = await signIn(formData);
 
-      if (data.tokenCreate.accountErrors.length > 0) {
-        setError(data.tokenCreate.accountErrors[0].message);
-      } else {
-        const { token, refreshToken, user } = data.tokenCreate;
+    if (data?.tokenCreate?.errors?.length > 0) {
+      setErrors(data.tokenCreate.errors.map((error, index) => ({ id: index, message: error.message })));
+      setFormData({ email: "", password: "" });
+    } else if (data?.tokenCreate?.token) {
+      // Login was successful
+      setUserEmail(currentUser?.me.email);
+      setErrors([]);
+      onClose(); // Close modal
 
-        // Decode JWT to get expiration time
-        const tokenPayload = JSON.parse(atob(token.split(".")[1]));
-        const tokenExpiry = tokenPayload.exp * 1000; // Convert to milliseconds
-
-        // Save tokens and expiration time
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("tokenExpiry", tokenExpiry);
-        localStorage.setItem("userEmail", user.email);
-
-        setUserEmail(user.email);
-        onClose();
-        router.push("/");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-      console.error(err);
     }
   };
 
@@ -94,14 +72,14 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
             </Link>
           </div>
         </div>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={submitHandler}>
           <input
             type="email"
             name="email"
             placeholder="Please enter email"
             className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
             value={formData.email}
-            onChange={handleInputChange}
+            onChange={changeHandler}
             required
           />
           <input
@@ -110,10 +88,10 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
             placeholder="Enter password"
             className="w-full p-2 bg-[#F0F0F0] border border-[#1A1919] rounded-lg mb-4"
             value={formData.password}
-            onChange={handleInputChange}
+            onChange={changeHandler}
             required
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {errors && <p className="text-red-500 text-sm">{errors}</p>}
           <button
             type="submit"
             disabled={loading}
@@ -134,3 +112,78 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
 };
 
 export default LoginModal;
+// "use client";
+
+// import { gql, useQuery } from "@apollo/client";
+// import { useSaleorAuthContext } from "@saleor/auth-sdk/react";
+// import React, { useState } from "react";
+
+// const CurrentUserDocument = gql`
+//   query CurrentUser {
+//     me {
+//       id
+//       email
+//       firstName
+//       lastName
+//     }
+//   }
+// `;
+
+// const DefaultValues = { email: "", password: "" };
+
+// const LoginModal = () => {
+//   const [formValues, setFormValues] = useState(DefaultValues);
+//   const [errors, setErrors] = useState([]);
+//   const { data: currentUser, loading } = useQuery(CurrentUserDocument);
+//   const { signIn, signOut } = useSaleorAuthContext();
+
+//   const changeHandler = (event) => {
+//     const { name, value } = event.currentTarget;
+//     setFormValues((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const submitHandler = async (event) => {
+//     event.preventDefault();
+
+//     const { data } = await signIn(formValues);
+
+//     if (data?.tokenCreate?.errors?.length > 0) {
+//       setErrors(data.tokenCreate.errors.map((error, index) => ({ id: index, message: error.message })));
+//       setFormValues(DefaultValues);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       {currentUser?.me ? (
+//         <div>
+//           <h1>Display user {JSON.stringify(currentUser)}</h1>
+//           <button className="button" onClick={() => signOut()}>
+//             Logout
+//           </button>
+//         </div>
+//       ) : (
+//         <div>
+//           <form onSubmit={submitHandler}>
+//             <input type="email" name="email" placeholder="Email" onChange={changeHandler} />
+//             <input type="password" name="password" placeholder="Password" onChange={changeHandler} />
+//             <button className="button" type="submit">
+//               Login
+//             </button>
+//           </form>
+//           {errors.length > 0 && (
+//             <ul>
+//               {errors.map((error) => (
+//                 <li key={error.id} className="error">
+//                   {error.message}
+//                 </li>
+//               ))}
+//             </ul>
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default LoginModal;

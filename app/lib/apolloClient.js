@@ -1,14 +1,34 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { getAuthToken } from "./auth";
+import { getAuthToken, refreshAuthToken } from "./auth";
 
 const httpLink = createHttpLink({
   uri: "https://resom-api.resom.com.br/graphql/",
 });
 
 const authLink = setContext(async (_, { headers }) => {
-  const token = await getAuthToken(); // Get valid token (refresh if expired)
+  let token = await getAuthToken();
+  const tokenExpiry = localStorage.getItem("tokenExpiry");
+  const currentTime = Date.now();
 
+  console.log("authLink - tokenExpiry:", tokenExpiry);
+  console.log("authLink - currentTime:", currentTime);
+
+  if (tokenExpiry && currentTime >= parseInt(tokenExpiry)) {
+    console.log("authLink - Token expired, refreshing...");
+    token = await refreshAuthToken(); // Refresh if expired
+  }
+
+  if (!token) {
+    console.log("authLink - no token found.");
+    return {
+      headers: {
+        ...headers,
+      },
+    };
+  }
+
+  console.log("authLink - Token being sent:", token);
   return {
     headers: {
       ...headers,
