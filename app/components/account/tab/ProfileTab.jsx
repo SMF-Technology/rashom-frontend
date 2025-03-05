@@ -1,7 +1,6 @@
 "use client";
 
 import { gql, useQuery } from "@apollo/client";
-import { useEffect } from "react";
 
 const CurrentUserDocument = gql`
   query CurrentUser  {
@@ -21,8 +20,6 @@ const CurrentUserDocument = gql`
 export default function ProfileTab() {
 
   const { data, loading, error } = useQuery(CurrentUserDocument)
-  console.log("check data", data);
-
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
