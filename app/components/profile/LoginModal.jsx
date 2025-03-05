@@ -20,15 +20,15 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-
-    setLoading(true)
+    setLoading(true);
     try {
       const { data } = await signIn(formData);
-
       if (data?.tokenCreate?.errors?.length > 0) {
+        console.error("Login errors:", data.tokenCreate.errors);
         setErrors(data.tokenCreate.errors.map((error, index) => ({ id: index, message: error.message })));
         setFormData({ email: "", password: "" });
       } else if (data?.tokenCreate?.token) {
+        console.log("Login successful", data.tokenCreate.token);
         setUserEmail(formData?.email);
         localStorage.setItem("userEmail", formData?.email);
         setErrors([]);
@@ -38,9 +38,10 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
       console.error("Login failed:", error);
       setErrors([{ id: 0, message: "Something went wrong. Please try again." }]);
     } finally {
-      setLoading(false); // Ensure loading state is updated even if an error occurs
+      setLoading(false);
     }
   };
+
 
   return (
     <div className="fixed inset-0 bg-black mt-[-350px] bg-opacity-50 flex justify-center items-center z-50">
@@ -81,7 +82,13 @@ const LoginModal = ({ isOpen, onClose, setUserEmail }) => {
             onChange={changeHandler}
             required
           />
-          {errors && <p className="text-red-500 text-sm">{errors}</p>}
+          {errors.length > 0 && (
+            <div className="mb-4">
+              {errors.map((error) => (
+                <p key={error.id} className="text-red-500 text-sm">{error.message}</p>
+              ))}
+            </div>
+          )}
           <button
             type="submit"
             disabled={loading}

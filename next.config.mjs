@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     runtime: "experimental-edge", // ✅ Enables Edge runtime for Cloudflare Pages
   },
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
