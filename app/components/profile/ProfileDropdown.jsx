@@ -15,32 +15,28 @@ import { TbAffiliate } from "react-icons/tb";
 import { TbHelp } from "react-icons/tb";
 import { TbLogout2 } from "react-icons/tb";
 import { useRouter } from "next/navigation";
+import { useSaleorAuthContext } from '@saleor/auth-sdk/react';
 
 const ProfileDropdown = ({ onClose, onProfileClick, setUserEmail }) => {
     const [size, setSize] = React.useState(null);
     const router = useRouter();
     const userEmail = localStorage.getItem("userEmail"); // No need to parse
+    const { signOut } = useSaleorAuthContext();
 
     const handleOpen = (value) => {
         setSize(value);
     };
 
     const handleLogout = () => {
-        // Remove user data from localStorage
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("tokenExpiry");
+        signOut()
+        localStorage.removeItem("userEmail")
+        setUserEmail(null)
 
-        // Update userEmail state in the parent component
-        setUserEmail(null);
-
-        // Redirect to the home page
-        router.push("/");
-
-        // Close the dropdown
+        router.push("/")
         onClose();
     };
+
+
 
     return (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">

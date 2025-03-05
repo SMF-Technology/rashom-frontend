@@ -3,8 +3,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
 
-const GET_USER_DATA = gql`
-  query GetUserData {
+const CurrentUserDocument = gql`
+  query CurrentUser  {
     me {
       id
       email
@@ -19,20 +19,9 @@ const GET_USER_DATA = gql`
 `;
 
 export default function ProfileTab() {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
 
-  const { loading, error, data } = useQuery(GET_USER_DATA, {
-    context: {
-      headers: {
-        authorization: token ? `Bearer ${token}` : "",
-      },
-    },
-  });
-
-  useEffect(() => {
-
-    console.log("it is triggers", data)
-  }, [])
+  const { data, loading, error } = useQuery(CurrentUserDocument)
+  console.log("check data", data);
 
 
   if (loading) return <p>Loading...</p>;
