@@ -19,6 +19,8 @@ const CurrentUserDocument = gql`
 
 export default function ProfileTab() {
 
+
+
   const { data, loading, error } = useQuery(CurrentUserDocument)
 
   if (loading) return <p>Loading...</p>;
